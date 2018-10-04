@@ -6,8 +6,8 @@ DECLARE @fechaInicio AS DATETIME,
 --SET DATEFORMAT YMD;
 SELECT @fechaInicio = '2018-09-01 00:00:00',
        @fechaFin = '2018-09-30 23:59:59',
-       @estatusPlan = NULL,
-       @Origen = NULL;
+       @estatusPlan = 0,
+       @Origen = 0;
 
 
 /*Crear Tablas Temporales*/
@@ -29,7 +29,7 @@ INSERT INTO @EstatusPlanVE
     Estatus
 )
 VALUES
-(   NULL,   -- estatusID - int
+(   0,   -- estatusID - int
     'Todos' -- Estatus - varchar(50)
 );
 
@@ -49,7 +49,7 @@ INSERT INTO @Pensiones
     Pension
 )
 VALUES
-(   NULL,   -- pensionID - int
+(   0,   -- pensionID - int
     'Todas' -- Pension - varchar(50)
 );
 
@@ -76,6 +76,15 @@ FROM @Pensiones AS p
 ORDER BY p.Pension ASC;
 
 /*Consulta Info*/
+IF @estatusPlan = 0 
+BEGIN
+    SET @estatusPlan = NULL
+END
+
+IF @Origen = 0
+BEGIN
+    SET @Origen = NULL
+END
 
 SELECT cpv.IdPlanVE,
        (
@@ -114,3 +123,52 @@ WHERE (cpv.FechaInicio
       AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
       AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
 ORDER BY cpv.FechaInicio ASC;
+
+
+SELECT cpv.IdPlanVE,
+       (
+           SELECT CASE
+                      WHEN cpv.IdRuta < 2000 THEN
+                          'VE'
+                      WHEN cpv.IdRuta > 2000 THEN
+                          'TI'
+                  END
+       ) AS UEN,
+       cpv.IdRuta,
+       cr.NombreRuta AS Ruta,
+       ISNULL(bt.Origen, '') AS Origen,
+       ISNULL(bt.Destino, '') AS Destino,
+       cepv.Estatus,
+       cp.IdPension,
+       cp.Pension,
+       cpv.IdBitacora AS Bitacora,
+       cpv.FechaInicio,
+       cpv.FechaFin,
+       ISNULL(cpv.Unidad, '') AS Unidad,
+       ISNULL(co1.CveOperador, '') AS CveOper1,
+       ISNULL(co2.CveOperador, '') AS CveOper2,
+       cpv.FechaDespacho,
+       ISNULL(cpv.UsuarioDespacha, '') AS UsuarioDespacha
+FROM dbo.CIO_PlanesVE cpv WITH (NOLOCK)
+    LEFT JOIN CAT.CIO_Pensiones cp WITH (NOLOCK)
+        ON cp.IdPension = cpv.IdPension
+    LEFT JOIN CAT.CIO_Rutas cr WITH (NOLOCK)
+        ON cr.IdRuta = cpv.IdRuta
+    LEFT JOIN dbo.BitacorasTurismo bt WITH (NOLOCK)
+        ON cpv.IdBitacora = bt.Bitacora
+           AND bt.Unidad = cpv.Unidad
+    LEFT JOIN CAT.CIO_Operadores co1 WITH (NOLOCK)
+        ON cpv.IdOperador1 = co1.IdOperador
+    LEFT JOIN CAT.CIO_Operadores co2 WITH (NOLOCK)
+        ON cpv.IdOperador2 = co2.IdOperador
+    LEFT JOIN CAT.CIO_EstatusPlanVE cepv WITH (NOLOCK)
+        ON cepv.IdEstatusPlanVE = cpv.IdEstatusPlanVE
+WHERE /*cpv.IdEstatusPlanVE IN ( 2, 3, 8 )
+      AND*/
+    cpv.FechaInicio
+    BETWEEN @fechaInicio AND @fechaFin
+    AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
+    AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
+ORDER BY bt.FechaInicio ASC;
+
+

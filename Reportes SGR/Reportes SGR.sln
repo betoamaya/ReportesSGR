@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2047
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "Reportes SGR", "Reportes SGR\Reportes SGR.rptproj", "{DA838ABB-3107-40B7-A043-5CD3178DCF4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		DebugLocal|Default = DebugLocal|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.Debug|Default.ActiveCfg = Debug
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.Debug|Default.Build.0 = Debug
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.Debug|Default.Deploy.0 = Debug
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.DebugLocal|Default.Build.0 = DebugLocal
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.Release|Default.ActiveCfg = Release
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.Release|Default.Build.0 = Release
+		{DA838ABB-3107-40B7-A043-5CD3178DCF4B}.Release|Default.Deploy.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA3D3B63-53AA-45D7-8C9D-39C00936A97F}
+	EndGlobalSection
+EndGlobal
