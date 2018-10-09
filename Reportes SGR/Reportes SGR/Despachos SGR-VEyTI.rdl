@@ -124,7 +124,7 @@ ORDER BY p.Pension ASC;</CommandText>
             <Value>=Parameters!Origen.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>
+        <CommandText>SET DATEFORMAT YMD;
 SELECT cpv.IdPlanVE,
        (
            SELECT CASE
@@ -169,6 +169,7 @@ WHERE cpv.IdEstatusPlanVE IN ( 2, 3, 8 )
       AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
       AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
 ORDER BY bt.FechaInicio ASC;</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
         <Field Name="IdPlanVE">
