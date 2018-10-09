@@ -29,7 +29,7 @@ INSERT INTO @EstatusPlanVE
     Estatus
 )
 VALUES
-(   0,   -- estatusID - int
+(   0,      -- estatusID - int
     'Todos' -- Estatus - varchar(50)
 );
 
@@ -41,6 +41,7 @@ INSERT INTO @EstatusPlanVE
 SELECT cepv.IdEstatusPlanVE,
        cepv.Estatus
 FROM CAT.CIO_EstatusPlanVE AS cepv
+WHERE cepv.IdEstatusPlanVE IN ( 2, 3, 8 )
 ORDER BY cepv.IdEstatusPlanVE ASC;
 
 INSERT INTO @Pensiones
@@ -49,7 +50,7 @@ INSERT INTO @Pensiones
     Pension
 )
 VALUES
-(   0,   -- pensionID - int
+(   0,      -- pensionID - int
     'Todas' -- Pension - varchar(50)
 );
 
@@ -76,15 +77,15 @@ FROM @Pensiones AS p
 ORDER BY p.Pension ASC;
 
 /*Consulta Info*/
-IF @estatusPlan = 0 
+IF @estatusPlan = 0
 BEGIN
-    SET @estatusPlan = NULL
-END
+    SET @estatusPlan = NULL;
+END;
 
 IF @Origen = 0
 BEGIN
-    SET @Origen = NULL
-END
+    SET @Origen = NULL;
+END;
 
 SELECT cpv.IdPlanVE,
        (
@@ -163,12 +164,9 @@ FROM dbo.CIO_PlanesVE cpv WITH (NOLOCK)
         ON cpv.IdOperador2 = co2.IdOperador
     LEFT JOIN CAT.CIO_EstatusPlanVE cepv WITH (NOLOCK)
         ON cepv.IdEstatusPlanVE = cpv.IdEstatusPlanVE
-WHERE /*cpv.IdEstatusPlanVE IN ( 2, 3, 8 )
-      AND*/
-    cpv.FechaInicio
-    BETWEEN @fechaInicio AND @fechaFin
-    AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
-    AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
+WHERE cpv.IdEstatusPlanVE IN ( 2, 3, 8 )
+      AND cpv.FechaInicio
+      BETWEEN @fechaInicio AND @fechaFin
+      AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
+      AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
 ORDER BY bt.FechaInicio ASC;
-
-
