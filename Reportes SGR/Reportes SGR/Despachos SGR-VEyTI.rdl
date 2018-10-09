@@ -165,7 +165,7 @@ FROM dbo.CIO_PlanesVE cpv WITH (NOLOCK)
         ON cepv.IdEstatusPlanVE = cpv.IdEstatusPlanVE
 WHERE cpv.IdEstatusPlanVE IN ( 2, 3, 8 )
       AND cpv.FechaInicio
-      BETWEEN @fechaInicio AND @fechaFin
+      BETWEEN (CONVERT(VARCHAR,@fechaInicio,111) + ' 00:00:00') AND (CONVERT(VARCHAR,@fechaFin,111) + ' 23:59:59')
       AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
       AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
 ORDER BY bt.FechaInicio ASC;</CommandText>
