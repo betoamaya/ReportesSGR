@@ -1,3 +1,32 @@
+/*Variables*/
+DECLARE @fechaInicio AS DATETIME,
+        @fechaFin AS DATETIME,
+        @estatusPlan AS INT,
+        @Origen AS INT;
+--SET DATEFORMAT YMD;
+SELECT @fechaInicio = '2018-10-01 00:00:00',
+       @fechaFin = '2018-10-01 00:00:00',
+       @estatusPlan = 0,
+       @Origen = 0;
+
+
+/*Crear Tablas Temporales*/
+DECLARE @EstatusPlanVE AS TABLE
+(
+    estatusID INT,
+    Estatus VARCHAR(50)
+);
+
+DECLARE @Pensiones AS TABLE
+(
+    pensionID INT,
+    Pension VARCHAR(50)
+);
+/*Llenar Tabla*/
+INSERT INTO @EstatusPlanVE
+(
+    estatusID,
+    Estatus
 )
 VALUES
 (   0,      -- estatusID - int
@@ -96,6 +125,8 @@ WHERE (cpv.FechaInicio
       AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
 ORDER BY cpv.FechaInicio ASC;
 
+
+SET DATEFORMAT YMD;
 
 SELECT cpv.IdPlanVE,
        (
