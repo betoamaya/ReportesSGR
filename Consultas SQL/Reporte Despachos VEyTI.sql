@@ -1,32 +1,3 @@
-/*Variables*/
-DECLARE @fechaInicio AS DATETIME,
-        @fechaFin AS DATETIME,
-        @estatusPlan AS INT,
-        @Origen AS INT;
---SET DATEFORMAT YMD;
-SELECT @fechaInicio = '2018-09-01 00:00:00',
-       @fechaFin = '2018-09-30 23:59:59',
-       @estatusPlan = 0,
-       @Origen = 0;
-
-
-/*Crear Tablas Temporales*/
-DECLARE @EstatusPlanVE AS TABLE
-(
-    estatusID INT,
-    Estatus VARCHAR(50)
-);
-
-DECLARE @Pensiones AS TABLE
-(
-    pensionID INT,
-    Pension VARCHAR(50)
-);
-/*Llenar Tabla*/
-INSERT INTO @EstatusPlanVE
-(
-    estatusID,
-    Estatus
 )
 VALUES
 (   0,      -- estatusID - int
@@ -166,7 +137,7 @@ FROM dbo.CIO_PlanesVE cpv WITH (NOLOCK)
         ON cepv.IdEstatusPlanVE = cpv.IdEstatusPlanVE
 WHERE cpv.IdEstatusPlanVE IN ( 2, 3, 8 )
       AND cpv.FechaInicio
-      BETWEEN @fechaInicio AND @fechaFin
+      BETWEEN (CONVERT(VARCHAR,@fechaInicio,111) + ' 00:00:00') AND (CONVERT(VARCHAR,@fechaFin,111) + ' 23:59:59')
       AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
       AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
 ORDER BY bt.FechaInicio ASC;
