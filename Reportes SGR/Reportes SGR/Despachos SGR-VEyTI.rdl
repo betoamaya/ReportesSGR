@@ -40,6 +40,7 @@ INSERT INTO @EstatusPlanVE
 SELECT cepv.IdEstatusPlanVE,
        cepv.Estatus
 FROM CAT.CIO_EstatusPlanVE AS cepv
+WHERE cepv.IdEstatusPlanVE IN ( 2, 3, 8 )
 ORDER BY cepv.IdEstatusPlanVE ASC;
 
 
@@ -123,19 +124,51 @@ ORDER BY p.Pension ASC;</CommandText>
             <Value>=Parameters!Origen.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT        cpv.IdPlanVE,
-                             (SELECT        CASE WHEN cpv.IdRuta &lt; 2000 THEN 'VE' WHEN cpv.IdRuta &gt; 2000 THEN 'TI' END AS Expr1) AS UEN, cpv.IdRuta, cr.NombreRuta AS Ruta, ISNULL(bt.Origen, '') AS Origen, ISNULL(bt.Destino, '') AS Destino, 
-                         cepv.Estatus, cp.IdPension, cp.Pension, cpv.IdBitacora AS Bitacora, cpv.FechaInicio, cpv.FechaFin, ISNULL(cpv.Unidad, '') AS Unidad, ISNULL(co1.CveOperador, '') AS CveOper1, ISNULL(co2.CveOperador, '') AS CveOper2, 
-                         cpv.FechaDespacho, ISNULL(cpv.UsuarioDespacha, '') AS UsuarioDespacha
-FROM            CIO_PlanesVE AS cpv WITH (NOLOCK) LEFT OUTER JOIN
-                         CAT.CIO_Pensiones AS cp WITH (NOLOCK) ON cp.IdPension = cpv.IdPension LEFT OUTER JOIN
-                         CAT.CIO_Rutas AS cr WITH (NOLOCK) ON cr.IdRuta = cpv.IdRuta LEFT OUTER JOIN
-                         BitacorasTurismo AS bt WITH (NOLOCK) ON cpv.IdBitacora = bt.Bitacora AND bt.Unidad = cpv.Unidad LEFT OUTER JOIN
-                         CAT.CIO_Operadores AS co1 WITH (NOLOCK) ON cpv.IdOperador1 = co1.IdOperador LEFT OUTER JOIN
-                         CAT.CIO_Operadores AS co2 WITH (NOLOCK) ON cpv.IdOperador2 = co2.IdOperador LEFT OUTER JOIN
-                         CAT.CIO_EstatusPlanVE AS cepv WITH (NOLOCK) ON cepv.IdEstatusPlanVE = cpv.IdEstatusPlanVE
-WHERE        (cpv.FechaInicio BETWEEN @fechaInicio AND @fechaFin) AND (cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)) AND (cpv.IdPension = ISNULL(@Origen, cpv.IdPension))
-ORDER BY bt.FechaInicio</CommandText>
+        <CommandText>
+SELECT cpv.IdPlanVE,
+       (
+           SELECT CASE
+                      WHEN cpv.IdRuta &lt; 2000 THEN
+                          'VE'
+                      WHEN cpv.IdRuta &gt; 2000 THEN
+                          'TI'
+                  END
+       ) AS UEN,
+       cpv.IdRuta,
+       cr.NombreRuta AS Ruta,
+       ISNULL(bt.Origen, '') AS Origen,
+       ISNULL(bt.Destino, '') AS Destino,
+       cepv.Estatus,
+       cp.IdPension,
+       cp.Pension,
+       cpv.IdBitacora AS Bitacora,
+       cpv.FechaInicio,
+       cpv.FechaFin,
+       ISNULL(cpv.Unidad, '') AS Unidad,
+       ISNULL(co1.CveOperador, '') AS CveOper1,
+       ISNULL(co2.CveOperador, '') AS CveOper2,
+       cpv.FechaDespacho,
+       ISNULL(cpv.UsuarioDespacha, '') AS UsuarioDespacha
+FROM dbo.CIO_PlanesVE cpv WITH (NOLOCK)
+    LEFT JOIN CAT.CIO_Pensiones cp WITH (NOLOCK)
+        ON cp.IdPension = cpv.IdPension
+    LEFT JOIN CAT.CIO_Rutas cr WITH (NOLOCK)
+        ON cr.IdRuta = cpv.IdRuta
+    LEFT JOIN dbo.BitacorasTurismo bt WITH (NOLOCK)
+        ON cpv.IdBitacora = bt.Bitacora
+           AND bt.Unidad = cpv.Unidad
+    LEFT JOIN CAT.CIO_Operadores co1 WITH (NOLOCK)
+        ON cpv.IdOperador1 = co1.IdOperador
+    LEFT JOIN CAT.CIO_Operadores co2 WITH (NOLOCK)
+        ON cpv.IdOperador2 = co2.IdOperador
+    LEFT JOIN CAT.CIO_EstatusPlanVE cepv WITH (NOLOCK)
+        ON cepv.IdEstatusPlanVE = cpv.IdEstatusPlanVE
+WHERE cpv.IdEstatusPlanVE IN ( 2, 3, 8 )
+      AND cpv.FechaInicio
+      BETWEEN (CONVERT(VARCHAR,@fechaInicio,111) + ' 00:00:00') AND (CONVERT(VARCHAR,@fechaFin,111) + ' 23:59:59')
+      AND cpv.IdEstatusPlanVE = ISNULL(@estatusPlan, cpv.IdEstatusPlanVE)
+      AND cpv.IdPension = ISNULL(@Origen, cpv.IdPension)
+ORDER BY bt.FechaInicio ASC;</CommandText>
       </Query>
       <Fields>
         <Field Name="IdPlanVE">
